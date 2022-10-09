@@ -2,16 +2,6 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 internal class HigherOrderKtTest {
-
-    @Test
-    fun `Should return true when list is sorted and false when is not`() {
-        assertTrue(isSorted(listOf(1, 2, 3, 4, 5, 6)) { a, b -> a < b })
-        assertTrue(isSorted(listOf(6, 5, 4, 3, 2, 1)) { a, b -> a > b })
-        assertFalse(isSorted(listOf(1, 6, 3, 4, 5, 6)) { a, b -> a < b })
-        assertFalse(isSorted(listOf(1, 2, 3, 4, 5, 6)) { a, b -> a > b })
-        assertFalse(isSorted(listOf(43, 3, 11, 2, 3)) { a, b -> a < b })
-    }
-
     @Test
     fun `Partial application example`(){
         val repeatLowercaseCharacterFun = partialApp(10) { a: Int, b: Char -> b.lowercase().repeat(a) }

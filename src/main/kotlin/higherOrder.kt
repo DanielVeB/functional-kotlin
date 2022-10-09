@@ -1,19 +1,3 @@
-val <T> List<T>.tail: List<T>
-    get() = drop(1)
-
-val <T> List<T>.head: T
-    get() = first()
-
-fun <A> isSorted(list: List<A>, order: (A, A) -> Boolean): Boolean {
-    tailrec fun loop(l: List<A>): Boolean =
-        when {
-            l.tail.isEmpty() -> true
-            !order(l.head, l.tail.head) -> false
-            else -> loop(l.tail)
-        }
-    return loop(list)
-}
-
 // Partial application
 // function is being applied to some but not all of the arguments it requires
 fun <A, B, C> partialApp(a: A, f: (A, B) -> C): (B) -> C = { b -> f(a, b) }
