@@ -58,29 +58,80 @@ internal class FunctionalListTest {
     }
 
     @Test
+    fun `Should calculate sum of numbers using left fold expression`() {
+        assertEquals(15, sumLeftFold(list))
+    }
+
+    @Test
+    fun `Should calculate product of numbers using left fold expression`() {
+        assertEquals(6.0, productLeftFold(FunctionalList.of(1.0, 2.0, 3.0)))
+    }
+
+    @Test
     fun `Test pass Nil and Cons to foldRight`() {
         val l = Cons(1, Cons(2, Cons(3, Nil)))
-        val result = foldRight(l, empty<Int>()) { x, y -> Cons(x, y) }
+        val result = foldRight(l, FunctionalList.empty<Int>()) { x, y -> Cons(x, y) }
 
         assertEquals(l, result)
     }
 
     @Test
-    fun `Should return length of list`(){
+    fun `Should return length of list`() {
         val result = length(list)
         assertEquals(5, result)
     }
+
     @Test
-    fun `Should return 0 length of Nil`(){
+    fun `Should return 0 length of Nil`() {
         val result = length(Nil)
         assertEquals(0, result)
     }
 
     @Test
-    fun `xs`(){
-        val list = FunctionalList.of(*((1..5000).toList().toTypedArray()))
-        assertThrows(StackOverflowError::class.java) { sumFold(list) }
+    fun `Should return reversed list`() {
+        assertEquals(FunctionalList.of(5, 4, 3, 2, 1), reverse(list))
+    }
 
+    @Test
+    fun `Should append 2 lists`() {
+        val l1 = FunctionalList.of(1, 2, 3)
+        val l2 = FunctionalList.of(4, 5, 6)
+        assertEquals(FunctionalList.of(1, 2, 3, 4, 5, 6), append(l1, l2))
+    }
+
+    @Test
+    fun `Should concatenate list of lists`() {
+        val p1 = FunctionalList.of(1, 2)
+        val p2 = FunctionalList.of(3, 4)
+        val p3 = FunctionalList.of(5, 6)
+
+        assertEquals(FunctionalList.of(1, 2, 3, 4, 5, 6), concatenate(FunctionalList.of(p1, p2, p3)))
+    }
+
+    @Test
+    fun `Should add 1 to each element in list`() {
+        assertEquals(FunctionalList.of(2, 3, 4, 5, 6), addOne(list))
+    }
+
+    @Test
+    fun `Should transform double to string`() {
+        assertEquals(
+            FunctionalList.of("1.0", "2.0", "3.0"),
+            doubleToString(FunctionalList.of(1.0, 2.0, 3.0))
+        )
+    }
+
+    @Test
+    fun `Should add 1 to each element in list using map function`() {
+        assertEquals(FunctionalList.of(2, 3, 4, 5, 6), map(list) { a -> 1 + a })
+    }
+
+    @Test
+    fun `Should transform double to string using map function`() {
+        assertEquals(
+            FunctionalList.of("1.0", "2.0", "3.0"),
+            map(FunctionalList.of(1.0, 2.0, 3.0)){ a -> a.toString()}
+        )
     }
 
 

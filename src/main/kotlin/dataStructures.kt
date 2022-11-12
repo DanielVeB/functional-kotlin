@@ -1,5 +1,3 @@
-import java.lang.Exception
-
 sealed class FunctionalList<out A> {
 
     companion object {
@@ -7,6 +5,8 @@ sealed class FunctionalList<out A> {
             val tail = aa.sliceArray(1 until aa.size)
             return if (aa.isEmpty()) Nil else Cons(aa[0], of(*tail))
         }
+
+        fun <A> empty(): FunctionalList<A> = Nil
     }
 
     fun <A> FunctionalList<A>.tail(): FunctionalList<A> {
@@ -41,13 +41,11 @@ sealed class FunctionalList<out A> {
             Nil -> Nil
         }
     }
-
 }
 
 object Nil : FunctionalList<Nothing>()
 data class Cons<out A>(val head: A, val tail: FunctionalList<A>) : FunctionalList<A>()
 
-fun <A> empty(): FunctionalList<A> = Nil
 fun sum(numbers: FunctionalList<Int>): Int {
     return when (numbers) {
         is Nil -> 0
@@ -78,6 +76,34 @@ fun sumLeftFold(ints: FunctionalList<Int>): Int =
 fun productFold(numbers: FunctionalList<Double>) =
     foldRight(numbers, 1.0) { a, b -> a * b }
 
+fun productLeftFold(numbers: FunctionalList<Double>) =
+    foldLeft(numbers, 1.0) { a, b -> a * b }
+
 fun <A> length(xs: FunctionalList<A>): Int {
     return foldRight(xs, 0) { _, b -> 1 + b }
 }
+
+fun <A> lengthLeftFold(xs: FunctionalList<A>): Int {
+    return foldLeft(xs, 0) { a, _ -> 1 + a }
+}
+
+fun <A> reverse(xs: FunctionalList<A>): FunctionalList<A> {
+    return foldLeft(xs, FunctionalList.empty()) { tail, head -> Cons(head, tail) }
+}
+
+fun <A> append(a1: FunctionalList<A>, a2: FunctionalList<A>): FunctionalList<A> {
+    return foldRight(a1, a2) { h, t -> Cons(h, t) }
+}
+
+fun <A> concatenate(list: FunctionalList<FunctionalList<A>>): FunctionalList<A> {
+    return foldRight(list, FunctionalList.empty()) { a, b -> append(a, b) }
+}
+
+fun addOne(list: FunctionalList<Int>): FunctionalList<Int> =
+    foldRight(list, FunctionalList.empty()) { h, t -> Cons(h + 1, t) }
+
+fun doubleToString(numbers: FunctionalList<Double>): FunctionalList<String> =
+    foldRight(numbers, FunctionalList.empty()) { h, t -> Cons(h.toString(), t) }
+
+fun <A, B> map(list: FunctionalList<A>, f: (A) -> B): FunctionalList<B> =
+    foldRight(list, FunctionalList.empty()) { h, t -> Cons(f(h), t) }
