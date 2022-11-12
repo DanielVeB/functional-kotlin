@@ -107,3 +107,39 @@ fun doubleToString(numbers: FunctionalList<Double>): FunctionalList<String> =
 
 fun <A, B> map(list: FunctionalList<A>, f: (A) -> B): FunctionalList<B> =
     foldRight(list, FunctionalList.empty()) { h, t -> Cons(f(h), t) }
+
+fun <A> filter(list: FunctionalList<A>, f: (A) -> Boolean): FunctionalList<A> =
+    foldRight(list, FunctionalList.empty()) { h, t -> if (f(h)) Cons(h, t) else t }
+
+fun <A, B> flatMap(list: FunctionalList<A>, f: (A) -> FunctionalList<B>): FunctionalList<B> =
+    concatenate(map(list, f))
+
+// Solution from book
+fun <A, B> flatMap2(xa: FunctionalList<A>, f: (A) -> FunctionalList<B>): FunctionalList<B> =
+    foldRight(
+        xa,
+        FunctionalList.empty()
+    ) { a, lb -> append(f(a), lb) }
+
+fun <A> filterWithFlatMap(list: FunctionalList<A>, f: (A) -> Boolean): FunctionalList<A> =
+    flatMap(list) { if (f(it)) FunctionalList.of(it) else FunctionalList.empty() }
+
+fun zipWithSum(list1: FunctionalList<Int>, list2: FunctionalList<Int>): FunctionalList<Int> =
+    when (list1) {
+        is Nil -> Nil
+        is Cons -> when (list2) {
+            is Nil -> Nil
+            is Cons -> Cons(list1.head + list2.head, zipWithSum(list1.tail, list2.tail))
+        }
+    }
+
+fun <A,B> zipWith(list1: FunctionalList<A>, list2: FunctionalList<A>, f: (A, A) -> B): FunctionalList<B> =
+    when (list1) {
+        is Nil -> Nil
+        is Cons -> when (list2) {
+            is Nil -> Nil
+            is Cons -> Cons(f(list1.head, list2.head), zipWith(list1.tail, list2.tail,f))
+        }
+    }
+
+

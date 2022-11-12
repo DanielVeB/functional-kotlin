@@ -130,9 +130,48 @@ internal class FunctionalListTest {
     fun `Should transform double to string using map function`() {
         assertEquals(
             FunctionalList.of("1.0", "2.0", "3.0"),
-            map(FunctionalList.of(1.0, 2.0, 3.0)){ a -> a.toString()}
+            map(FunctionalList.of(1.0, 2.0, 3.0)) { a -> a.toString() }
         )
     }
 
+    @Test
+    fun `Should remove all numbers greater than 5`() {
+        assertEquals(FunctionalList.of(1, 2, 3, 4, 5),
+            filter(FunctionalList.of(1, 6, 2, 3, 72, 43, 11, 4, 5, 10)) { it <= 5 })
+
+        assertEquals(FunctionalList.of(1, 2, 3, 4, 5),
+            filterWithFlatMap(FunctionalList.of(1, 6, 2, 3, 72, 43, 11, 4, 5, 10)) { it <= 5 })
+    }
+
+    @Test
+    fun `Should do copy of each element in list`() {
+        assertEquals(FunctionalList.of(1, 1, 2, 2, 3, 3),
+            flatMap(FunctionalList.of(1, 2, 3)) { FunctionalList.of(it, it) })
+
+        assertEquals(FunctionalList.of(1, 1, 2, 2, 3, 3),
+            flatMap2(FunctionalList.of(1, 2, 3)) { FunctionalList.of(it, it) })
+    }
+
+    @Test
+    fun `Should construct new list by adding corresponding elements`() {
+        assertEquals(
+            FunctionalList.of(5, 7, 9),
+            zipWithSum(FunctionalList.of(1, 2, 3), FunctionalList.of(4, 5, 6))
+        )
+
+        assertEquals(FunctionalList.of(5, 7, 9),
+            zipWith(FunctionalList.of(1, 2, 3), FunctionalList.of(4, 5, 6)) { a, b -> a + b })
+    }
+
+    @Test
+    fun `test zipWith`() {
+        val l1 = FunctionalList.of(1, 3, 4)
+        val l2 = FunctionalList.of(2, 4, 6)
+
+        assertEquals(FunctionalList.of(0.5, 0.75, 0.67), zipWith(l1, l2) { a, b -> a.toDouble().div(b).round(2) })
+
+    }
+
+    private fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
 
 }
