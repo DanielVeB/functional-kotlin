@@ -1,3 +1,5 @@
+package datastructures
+
 sealed class FunctionalList<out A> {
 
     companion object {
@@ -37,7 +39,6 @@ sealed class FunctionalList<out A> {
                 if (f(this.head)) this.tail.dropWhile(f)
                 else this
             }
-
             Nil -> Nil
         }
     }
@@ -133,13 +134,12 @@ fun zipWithSum(list1: FunctionalList<Int>, list2: FunctionalList<Int>): Function
         }
     }
 
-fun <A,B> zipWith(list1: FunctionalList<A>, list2: FunctionalList<A>, f: (A, A) -> B): FunctionalList<B> =
+fun <A, B> zipWith(list1: FunctionalList<A>, list2: FunctionalList<A>, f: (A, A) -> B): FunctionalList<B> =
     when (list1) {
         is Nil -> Nil
         is Cons -> when (list2) {
             is Nil -> Nil
-            is Cons -> Cons(f(list1.head, list2.head), zipWith(list1.tail, list2.tail,f))
+            is Cons -> Cons(f(list1.head, list2.head), zipWith(list1.tail, list2.tail, f))
         }
     }
-
 

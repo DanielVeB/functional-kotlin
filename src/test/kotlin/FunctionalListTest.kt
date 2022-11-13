@@ -1,7 +1,11 @@
-import Nil.drop
-import Nil.dropWhile
-import Nil.setHead
-import Nil.tail
+
+import datastructures.FunctionalList
+import datastructures.Nil
+import datastructures.Nil.drop
+import datastructures.Nil.dropWhile
+import datastructures.Nil.setHead
+import datastructures.Nil.tail
+import datastructures.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -173,5 +177,23 @@ internal class FunctionalListTest {
     }
 
     private fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
+
+//    @Test
+//    fun `Should return true when list contains subsequence`() {
+//
+//        assertTrue(hasSubsequence(datastructures.FunctionalList.of(1, 2,3,4,5),datastructures.FunctionalList.of(3,4)))
+//        assertTrue(hasSubsequence(datastructures.FunctionalList.of(1, 2,3,4,5),datastructures.FunctionalList.of(1,2)))
+//        assertTrue(hasSubsequence(datastructures.FunctionalList.of(1, 2,3,4,5),datastructures.FunctionalList.of(1,2,3,4,5)))
+//
+//        assertTrue(hasSubsequence(datastructures.FunctionalList.of(1, 2,3,4,5),datastructures.FunctionalList.of(1)))
+//        assertTrue(hasSubsequence(datastructures.FunctionalList.of(1, 2,3,4,5),datastructures.FunctionalList.of(5)))
+//
+//        assertFalse(hasSubsequence(datastructures.FunctionalList.of(1, 2,3,4,5),datastructures.FunctionalList.of(0)))
+//        assertFalse(hasSubsequence(datastructures.FunctionalList.of(1, 2,3,4,5),datastructures.FunctionalList.of(6)))
+//        assertFalse(hasSubsequence(datastructures.FunctionalList.of(1, 2,3,4,5),datastructures.FunctionalList.of(2,3,5)))
+//        assertFalse(hasSubsequence(datastructures.FunctionalList.of(1, 2,3,4,5),datastructures.FunctionalList.of(1,2,3,4,5,6)))
+//        assertFalse(hasSubsequence(datastructures.FunctionalList.of(1, 2,3,4,5),datastructures.FunctionalList.of(0,1,2,3,4)))
+//
+//    }
 
 }
