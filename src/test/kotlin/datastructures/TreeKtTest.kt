@@ -7,7 +7,9 @@ internal class TreeKtTest {
 
     @Test
     fun `Should return 1 when tree has only 1 leaf`() {
-        assertEquals(Leaf(1).size(), 1)
+        assertEquals(1, Leaf(1).size())
+
+        assertEquals(1, Leaf(1).sizeFold())
     }
 
     @Test
@@ -16,11 +18,14 @@ internal class TreeKtTest {
             Branch(Leaf(1), Leaf(1)),
             Leaf(1)
         )
-        assertEquals(tree.size(), 5)
+        assertEquals(5, tree.size())
+        assertEquals(5, tree.sizeFold())
 
         val biggerTree = Branch(tree, Branch(Leaf(1), Leaf(1)))
 
         assertEquals(9, biggerTree.size())
+        assertEquals(9, biggerTree.sizeFold())
+
     }
 
     @Test
@@ -30,8 +35,11 @@ internal class TreeKtTest {
             Leaf(2)
         )
         assertEquals(4, tree.maximum())
+        assertEquals(4, tree.maximumFold())
 
         assertEquals(1, Leaf(1).maximum())
+        assertEquals(4, tree.maximumFold())
+
     }
 
     @Test
@@ -57,6 +65,7 @@ internal class TreeKtTest {
         )
 
         assertEquals(5, tree.depth())
+        assertEquals(5, tree.depthFold())
     }
 
     @Test
@@ -110,6 +119,7 @@ internal class TreeKtTest {
         )
 
         assertEquals(expectedTree, tree.map(nameOfNumber))
+        assertEquals(expectedTree, tree.mapFold(nameOfNumber))
     }
 
 }
