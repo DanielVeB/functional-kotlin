@@ -27,4 +27,27 @@ internal class OptionKtTest {
         assertEquals(Some(1), Some(1).orElse { Some(2) })
         assertEquals(Some(2), None.orElse { Some(2) })
     }
+
+    @Test
+    fun `Should return option value after filtering`() {
+        assertEquals(Some(1), Some(1).filter { it % 2 == 1 })
+        assertEquals(None, Some(2).filter { it % 2 == 1 })
+    }
+
+    @Test
+    fun `Should calculate variance of list`() {
+        assertEquals(Some(2.0), variance(listOf(1.0, 2.0, 3.0, 4.0, 5.0)))
+    }
+
+    @Test
+    fun `Should map two options when neither is None`() {
+        assertEquals(None, map2(Some(1), None) { a: Int, b: Int -> a + b })
+        assertEquals(None, map2(None, None) { a: Int, b: Int -> a + b })
+        assertEquals(None, map2(None, Some(1)) { a: Int, b: Int -> a + b })
+
+        assertEquals(Some(3), map2(Some(2), Some(1)) { a: Int, b: Int -> a + b })
+
+    }
+
+
 }
