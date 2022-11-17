@@ -1,5 +1,9 @@
 package errorhandling
 
+import datastructures.FunctionalList
+import datastructures.Nil
+import datastructures.Nil.setHead
+import datastructures.foldRight
 import kotlin.math.pow
 
 sealed class Option<out A>
@@ -53,4 +57,11 @@ fun <A, B> lift(f: (A) -> B): (Option<A>) -> Option<B> =
     { oa -> oa.map(f) }
 
 fun <A, B, C> map2(a: Option<A>, b: Option<B>, f: (A, B) -> C): Option<C> =
-    a.flatMap { x -> b.flatMap { y -> Some(f(x,y)) } }
+    a.flatMap { x -> b.flatMap { y -> Some(f(x, y)) } }
+
+fun <A> sequence(xs: FunctionalList<Option<A>>): Option<FunctionalList<A>> =
+    foldRight(xs, Some(Nil)) { option: Option<A>, list: Option<FunctionalList<A>> ->
+        map2(option, list) { item: A, l: FunctionalList<A> ->
+            l.setHead(item)
+        }
+    }

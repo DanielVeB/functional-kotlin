@@ -1,5 +1,6 @@
 package errorhandling
 
+import datastructures.FunctionalList
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -46,6 +47,18 @@ internal class OptionKtTest {
         assertEquals(None, map2(None, Some(1)) { a: Int, b: Int -> a + b })
 
         assertEquals(Some(3), map2(Some(2), Some(1)) { a: Int, b: Int -> a + b })
+
+    }
+
+    @Test
+    fun `Should combine a list of Options int one Option containing a list`() {
+        assertEquals(
+            Some(FunctionalList.of(1, 2, 3)),
+            sequence(FunctionalList.of(Some(1), Some(2), Some(3))))
+
+        assertEquals(
+            None,
+            sequence(FunctionalList.of(Some(1), None, Some(3))))
 
     }
 
