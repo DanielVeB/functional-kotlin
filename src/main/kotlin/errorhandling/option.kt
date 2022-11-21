@@ -1,9 +1,7 @@
 package errorhandling
 
-import datastructures.FunctionalList
-import datastructures.Nil
+import datastructures.*
 import datastructures.Nil.setHead
-import datastructures.foldRight
 import kotlin.math.pow
 
 sealed class Option<out A>
@@ -65,3 +63,40 @@ fun <A> sequence(xs: FunctionalList<Option<A>>): Option<FunctionalList<A>> =
             l.setHead(item)
         }
     }
+
+fun <A> catchesO(a: () -> A): Option<A> =
+    try {
+        Some(a())
+    } catch (e: Throwable) {
+        None
+    }
+
+fun parseInts(xs: FunctionalList<String>): Option<FunctionalList<Int>> =
+    sequence(map(xs) { str -> catchesO { str.toInt() } })
+
+
+//fun <A, B> traverse(
+//    xa: FunctionalList<A>,
+//    f: (A) -> Option<B>
+//): Option<FunctionalList<B>> = sequence(map(xa, f))
+
+fun <A, B> traverse(
+    xa: FunctionalList<A>,
+    f: (A) -> Option<B>
+): Option<FunctionalList<B>> = when (xa) {
+    is Nil -> Some(Nil)
+    is Cons -> map2(f(xa.head), traverse(xa.tail, f)) { h, t -> Cons(h, t) }
+}
+
+fun <A, B> traverse2(
+    xa: FunctionalList<A>,
+    f: (A) -> Option<B>
+): Option<FunctionalList<B>> = when (xa) {
+    is Nil -> Some(Nil)
+    is Cons -> foldRight(xa, Some(Nil)) { h: A, t: Option<FunctionalList<B>> ->
+        map2(f(h), t) { x, y -> Cons(x, y) }
+    }
+}
+
+
+

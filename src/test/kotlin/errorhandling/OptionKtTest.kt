@@ -54,13 +54,36 @@ internal class OptionKtTest {
     fun `Should combine a list of Options int one Option containing a list`() {
         assertEquals(
             Some(FunctionalList.of(1, 2, 3)),
-            sequence(FunctionalList.of(Some(1), Some(2), Some(3))))
+            sequence(FunctionalList.of(Some(1), Some(2), Some(3)))
+        )
 
         assertEquals(
             None,
-            sequence(FunctionalList.of(Some(1), None, Some(3))))
+            sequence(FunctionalList.of(Some(1), None, Some(3)))
+        )
 
     }
 
+    @Test
+    fun `Should parse list of string to integers`() {
+        assertEquals(
+            Some(FunctionalList.of(1, 2, 3)),
+            parseInts(FunctionalList.of("1", "2", "3"))
+        )
+
+        assertEquals(None, parseInts(FunctionalList.of("1", "2", "a", "3")))
+
+    }
+
+    @Test
+    fun `test traverse`() {
+        assertEquals(
+            Some(FunctionalList.of(1, 2, 3)),
+            traverse2(FunctionalList.of("1", "2", "3")) { catchesO { it.toInt() } }
+        )
+
+        assertEquals(None, traverse2(FunctionalList.of("1", "2", "a", "3")) { catchesO { it.toInt() } })
+
+    }
 
 }
