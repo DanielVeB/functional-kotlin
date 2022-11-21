@@ -1,9 +1,11 @@
-package errorhandling
+package errorhandling.either
 
-import org.junit.jupiter.api.Assertions.*
+import datastructures.List
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import utils.nameOfNumber
 import utils.sumIntegers
-import java.lang.Exception
 
 internal class EitherKtTest {
 
@@ -19,7 +21,8 @@ internal class EitherKtTest {
     @Test
     fun `Should return the valid outcome of the whole flatMap chain`() {
 
-        assertEquals(Right(5),
+        assertEquals(
+            Right(5),
             Right(1)
                 .flatMap { Right(2) }
                 .flatMap { Right(3) }
@@ -36,6 +39,7 @@ internal class EitherKtTest {
             .flatMap { Left(Exception()) }
             .flatMap { Right(5) } is Left)
     }
+
     @Test
     fun `Should calculate sum of integers when both vales are right`() {
         assertEquals(Right(10), map2(Right(3), Right(7), sumIntegers))
@@ -44,6 +48,13 @@ internal class EitherKtTest {
     @Test
     fun `Should return Left when either of values is left`() {
         assertTrue(map2(Left(Exception()), Right(7), sumIntegers) is Left)
+    }
+
+    @Test
+    fun `Should traverse list to either`() {
+        assertEquals(
+            Right(List.of("one", "two", "three", "four")),
+            traverse(List.of(1, 2, 3, 4)) { catchesE { nameOfNumber(it) } })
     }
 
 }

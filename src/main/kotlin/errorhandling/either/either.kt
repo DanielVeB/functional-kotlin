@@ -1,4 +1,7 @@
-package errorhandling
+package errorhandling.either
+
+import datastructures.Cons
+import datastructures.Nil
 
 sealed class Either<out E, out A>
 
@@ -6,7 +9,7 @@ data class Left<out E>(val value: E) : Either<E, Nothing>()
 
 data class Right<out A>(val value: A) : Either<Nothing, A>()
 
-fun <A> catches(a: () -> A): Either<Exception, A> =
+fun <A> catchesE(a: () -> A): Either<Exception, A> =
     try {
         Right<A>(a())
     } catch (e: Exception) {
@@ -37,3 +40,11 @@ fun <E, A, B, C> map2(
     f: (A, B) -> C
 ): Either<E, C> = ae.flatMap { a -> be.map { b -> f(a, b) } }
 
+fun <E, A, B> traverse(
+    xa: datastructures.List<A>,
+    f: (A) -> Either<E, B>
+): Either<E, datastructures.List<B>> =
+    when (xa) {
+        is Nil -> Right(Nil)
+        is Cons -> map2(f(xa.head), traverse(xa.tail, f)) { h, t -> Cons(h, t) }
+    }
