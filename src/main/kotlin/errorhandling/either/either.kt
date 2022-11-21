@@ -48,3 +48,5 @@ fun <E, A, B> traverse(
         is Nil -> Right(Nil)
         is Cons -> map2(f(xa.head), traverse(xa.tail, f)) { h, t -> Cons(h, t) }
     }
+fun <E, A> sequence(es: datastructures.List<Either<E, A>>): Either<E, datastructures.List<A>> =
+    traverse(es) { it }

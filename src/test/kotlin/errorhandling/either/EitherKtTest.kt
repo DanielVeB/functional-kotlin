@@ -56,5 +56,4 @@ internal class EitherKtTest {
             Right(List.of("one", "two", "three", "four")),
             traverse(List.of(1, 2, 3, 4)) { catchesE { nameOfNumber(it) } })
     }
-
 }

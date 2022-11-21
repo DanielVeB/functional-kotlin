@@ -12,7 +12,10 @@ repositories {
 }
 
 dependencies {
+    val mockkVersion = "1.13.2"
+
     testImplementation(kotlin("test"))
+    testImplementation("io.mockk:mockk:${mockkVersion}")
 }
 
 tasks.test {
