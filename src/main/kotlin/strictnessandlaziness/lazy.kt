@@ -90,3 +90,24 @@ fun <A> Stream<A>.drop(n: Int): Stream<A> {
     }
     return go(this, n)
 }
+
+fun <A, B> Stream<A>.foldRight(
+    z: () -> B,
+    f: (A, () -> B) -> B
+): B = when (this) {
+    is Cons -> f(this.head()) {
+        tail().foldRight(z, f)
+    }
+
+    is Empty -> z()
+}
+
+
+fun <A> Stream<A>.exists(p: (A) -> Boolean): Boolean =
+    when (this) {
+        is Cons -> p(this.head()) || this.tail().exists(p)
+        else -> false
+    }
+
+fun <A> Stream<A>.exists2(p: (A) -> Boolean): Boolean =
+    foldRight({ false }, { a, b -> p(a) || b() })

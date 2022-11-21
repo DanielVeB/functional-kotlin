@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class LazyKtTest {
 
@@ -76,5 +77,16 @@ internal class LazyKtTest {
         val stream = Stream.of(1, 2, 3, 4, 5)
         val result = stream.drop(3)
         assertEquals(Stream.of(4, 5).toList(), result.toList())
+    }
+
+
+    @Test
+    fun `Should return true for exisiting element`() {
+        val stream = Stream.of(1, 2, 3, 4, 5)
+        val result = stream.exists { it == 3 }
+        assertTrue { result }
+
+        val result2 = stream.exists2 { it == 3 }
+        assertTrue { result2 }
     }
 }
