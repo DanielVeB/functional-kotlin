@@ -57,9 +57,9 @@ fun <A, B> lift(f: (A) -> B): (Option<A>) -> Option<B> =
 fun <A, B, C> map2(a: Option<A>, b: Option<B>, f: (A, B) -> C): Option<C> =
     a.flatMap { x -> b.flatMap { y -> Some(f(x, y)) } }
 
-fun <A> sequence(xs: FunctionalList<Option<A>>): Option<FunctionalList<A>> =
-    foldRight(xs, Some(Nil)) { option: Option<A>, list: Option<FunctionalList<A>> ->
-        map2(option, list) { item: A, l: FunctionalList<A> ->
+fun <A> sequence(xs: datastructures.List<Option<A>>): Option<datastructures.List<A>> =
+    foldRight(xs, Some(Nil)) { option: Option<A>, list: Option<datastructures.List<A>> ->
+        map2(option, list) { item: A, l: datastructures.List<A> ->
             l.setHead(item)
         }
     }
@@ -71,7 +71,7 @@ fun <A> catchesO(a: () -> A): Option<A> =
         None
     }
 
-fun parseInts(xs: FunctionalList<String>): Option<FunctionalList<Int>> =
+fun parseInts(xs: datastructures.List<String>): Option<datastructures.List<Int>> =
     sequence(map(xs) { str -> catchesO { str.toInt() } })
 
 
@@ -81,19 +81,19 @@ fun parseInts(xs: FunctionalList<String>): Option<FunctionalList<Int>> =
 //): Option<FunctionalList<B>> = sequence(map(xa, f))
 
 fun <A, B> traverse(
-    xa: FunctionalList<A>,
+    xa: datastructures.List<A>,
     f: (A) -> Option<B>
-): Option<FunctionalList<B>> = when (xa) {
+): Option<datastructures.List<B>> = when (xa) {
     is Nil -> Some(Nil)
     is Cons -> map2(f(xa.head), traverse(xa.tail, f)) { h, t -> Cons(h, t) }
 }
 
 fun <A, B> traverse2(
-    xa: FunctionalList<A>,
+    xa: datastructures.List<A>,
     f: (A) -> Option<B>
-): Option<FunctionalList<B>> = when (xa) {
+): Option<datastructures.List<B>> = when (xa) {
     is Nil -> Some(Nil)
-    is Cons -> foldRight(xa, Some(Nil)) { h: A, t: Option<FunctionalList<B>> ->
+    is Cons -> foldRight(xa, Some(Nil)) { h: A, t: Option<datastructures.List<B>> ->
         map2(f(h), t) { x, y -> Cons(x, y) }
     }
 }

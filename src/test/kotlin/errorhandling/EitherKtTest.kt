@@ -2,6 +2,7 @@ package errorhandling
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import utils.sumIntegers
 import java.lang.Exception
 
 internal class EitherKtTest {
@@ -35,9 +36,6 @@ internal class EitherKtTest {
             .flatMap { Left(Exception()) }
             .flatMap { Right(5) } is Left)
     }
-
-    private val sumIntegers = { a: Int, b: Int -> a + b }
-
     @Test
     fun `Should calculate sum of integers when both vales are right`() {
         assertEquals(Right(10), map2(Right(3), Right(7), sumIntegers))

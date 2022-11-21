@@ -1,8 +1,9 @@
 package errorhandling
 
-import datastructures.FunctionalList
+import datastructures.List
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import utils.sumIntegers
 
 internal class OptionKtTest {
 
@@ -42,24 +43,24 @@ internal class OptionKtTest {
 
     @Test
     fun `Should map two options when neither is None`() {
-        assertEquals(None, map2(Some(1), None) { a: Int, b: Int -> a + b })
-        assertEquals(None, map2(None, None) { a: Int, b: Int -> a + b })
-        assertEquals(None, map2(None, Some(1)) { a: Int, b: Int -> a + b })
+        assertEquals(None, map2(Some(1), None, sumIntegers))
+        assertEquals(None, map2(None, None, sumIntegers))
+        assertEquals(None, map2(None, Some(1), sumIntegers))
 
-        assertEquals(Some(3), map2(Some(2), Some(1)) { a: Int, b: Int -> a + b })
+        assertEquals(Some(3), map2(Some(2), Some(1), sumIntegers))
 
     }
 
     @Test
     fun `Should combine a list of Options int one Option containing a list`() {
         assertEquals(
-            Some(FunctionalList.of(1, 2, 3)),
-            sequence(FunctionalList.of(Some(1), Some(2), Some(3)))
+            Some(List.of(1, 2, 3)),
+            sequence(List.of(Some(1), Some(2), Some(3)))
         )
 
         assertEquals(
             None,
-            sequence(FunctionalList.of(Some(1), None, Some(3)))
+            sequence(List.of(Some(1), None, Some(3)))
         )
 
     }
@@ -67,22 +68,22 @@ internal class OptionKtTest {
     @Test
     fun `Should parse list of string to integers`() {
         assertEquals(
-            Some(FunctionalList.of(1, 2, 3)),
-            parseInts(FunctionalList.of("1", "2", "3"))
+            Some(List.of(1, 2, 3)),
+            parseInts(List.of("1", "2", "3"))
         )
 
-        assertEquals(None, parseInts(FunctionalList.of("1", "2", "a", "3")))
+        assertEquals(None, parseInts(List.of("1", "2", "a", "3")))
 
     }
 
     @Test
     fun `test traverse`() {
         assertEquals(
-            Some(FunctionalList.of(1, 2, 3)),
-            traverse2(FunctionalList.of("1", "2", "3")) { catchesO { it.toInt() } }
+            Some(List.of(1, 2, 3)),
+            traverse2(List.of("1", "2", "3")) { catchesO { it.toInt() } }
         )
 
-        assertEquals(None, traverse2(FunctionalList.of("1", "2", "a", "3")) { catchesO { it.toInt() } })
+        assertEquals(None, traverse2(List.of("1", "2", "a", "3")) { catchesO { it.toInt() } })
 
     }
 
