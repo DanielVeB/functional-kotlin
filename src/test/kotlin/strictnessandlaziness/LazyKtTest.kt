@@ -1,5 +1,6 @@
 package strictnessandlaziness
 
+import datastructures.List
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -26,8 +27,8 @@ internal class LazyKtTest {
         }
 
         val x = Cons({ mocked.expensiveMethod(54) }, { Empty })
-        val h1 = x.headOption()
-        val h2 = x.headOption()
+        x.headOption()
+        x.headOption()
 
         assertEquals(2, counter)
     }
@@ -42,10 +43,38 @@ internal class LazyKtTest {
         }
 
         val x = cons({ mocked.expensiveMethod(54) }, { Empty })
-        val h1 = x.headOption()
-        val h2 = x.headOption()
+        x.headOption()
+        x.headOption()
 
         assertEquals(1, counter)
 
+    }
+
+    @Test
+    fun `Should convert stream to list`() {
+        val stream = Stream.of(1, 2, 3, 4, 5)
+
+        assertEquals(List.of(1, 2, 3, 4, 5), stream.toList())
+    }
+
+    @Test
+    fun `Should take first 3 elements of stream`() {
+        val stream = Stream.of(1, 2, 3, 4, 5)
+        val result = stream.take(3)
+        assertEquals(Stream.of(1, 2, 3).toList(), result.toList())
+    }
+
+    @Test
+    fun `Should take while elements are less than 4 of stream`() {
+        val stream = Stream.of(1, 2, 3, 4, 5, 6)
+        val result = stream.takeWhile { it < 4 }
+        assertEquals(Stream.of(1, 2, 3).toList(), result.toList())
+    }
+
+    @Test
+    fun `Should drop first 3 elements of stream`() {
+        val stream = Stream.of(1, 2, 3, 4, 5)
+        val result = stream.drop(3)
+        assertEquals(Stream.of(4, 5).toList(), result.toList())
     }
 }
