@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class LazyKtTest {
@@ -67,8 +68,12 @@ internal class LazyKtTest {
 
     @Test
     fun `Should take while elements are less than 4 of stream`() {
-        val stream = Stream.of(1, 2, 3, 4, 5, 6)
+        val stream = Stream.of(1, 2, 3, 4, 5, 4, 2, 6)
+
+        val resultRec = stream.takeWhileRec { it < 4 }
         val result = stream.takeWhile { it < 4 }
+
+        assertEquals(Stream.of(1, 2, 3).toList(), resultRec.toList())
         assertEquals(Stream.of(1, 2, 3).toList(), result.toList())
     }
 
@@ -81,12 +86,22 @@ internal class LazyKtTest {
 
 
     @Test
-    fun `Should return true for exisiting element`() {
+    fun `Should return true for existing element`() {
         val stream = Stream.of(1, 2, 3, 4, 5)
         val result = stream.exists { it == 3 }
         assertTrue { result }
 
         val result2 = stream.exists2 { it == 3 }
         assertTrue { result2 }
+    }
+
+    @Test
+    fun `Should return true when all elements match predicate`() {
+        val stream = Stream.of(1, 2, 3, 4, 5)
+        val result = stream.forAll { it < 6 }
+        assertTrue { result }
+
+        val result2 = stream.forAll { it == 1 }
+        assertFalse { result2 }
     }
 }

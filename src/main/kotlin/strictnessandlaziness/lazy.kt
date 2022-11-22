@@ -68,7 +68,7 @@ fun <A> Stream<A>.take(n: Int): Stream<A> {
     return go(this, n)
 }
 
-fun <A> Stream<A>.takeWhile(p: (A) -> Boolean): Stream<A> {
+fun <A> Stream<A>.takeWhileRec(p: (A) -> Boolean): Stream<A> {
     fun <A> go(stream: Stream<A>, p: (A) -> Boolean): Stream<A> = when (stream) {
         is Empty -> empty()
         is Cons -> {
@@ -111,3 +111,9 @@ fun <A> Stream<A>.exists(p: (A) -> Boolean): Boolean =
 
 fun <A> Stream<A>.exists2(p: (A) -> Boolean): Boolean =
     foldRight({ false }, { a, b -> p(a) || b() })
+
+fun <A> Stream<A>.forAll(p: (A) -> Boolean): Boolean =
+    foldRight({ true }, { a, b -> p(a) && b() })
+
+fun <A> Stream<A>.takeWhile(p: (A) -> Boolean): Stream<A> =
+    foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, b) else empty() }
