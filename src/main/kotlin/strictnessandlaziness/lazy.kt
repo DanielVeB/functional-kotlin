@@ -117,3 +117,17 @@ fun <A> Stream<A>.forAll(p: (A) -> Boolean): Boolean =
 
 fun <A> Stream<A>.takeWhile(p: (A) -> Boolean): Stream<A> =
     foldRight({ empty() }) { a, b -> if (p(a)) cons({ a }, b) else empty() }
+
+fun <A> Stream<A>.headOption2(): Option<A> =
+    foldRight({ Option.empty() }, { a, _ -> Some(a) })
+
+fun <A, B> Stream<A>.map(f: (A) -> B): Stream<B> =
+    foldRight({ empty() }) { h, t -> cons({ f(h) }, t) }
+
+fun <A> Stream<A>.filter(f: (A) -> Boolean): Stream<A> =
+    foldRight({ empty() }) { h, t -> if (f(h)) cons({ h }, t) else t() }
+
+fun <A> Stream<A>.append(other: () -> Stream<A>): Stream<A> =
+    foldRight(other) { h, t -> cons({ h }, t) }
+
+

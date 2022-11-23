@@ -3,6 +3,7 @@ package strictnessandlaziness
 import datastructures.List
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -103,5 +104,28 @@ internal class LazyKtTest {
 
         val result2 = stream.forAll { it == 1 }
         assertFalse { result2 }
+    }
+
+    @Test
+    fun `Should transform double to string using map function`() {
+        Assertions.assertEquals(
+            Stream.of("1.0", "2.0", "3.0").toList(),
+            Stream.of(1.0, 2.0, 3.0).map { a -> a.toString() }.toList()
+        )
+    }
+
+    @Test
+    fun `Should remove all numbers greater than 5`() {
+        Assertions.assertEquals(
+            Stream.of(1, 2, 3, 4, 5).toList(),
+            Stream.of(1, 6, 2, 3, 72, 43, 11, 4, 5, 10).filter { it <= 5 }.toList()
+        )
+    }
+
+    @Test
+    fun `Should append 2 streams`() {
+        val s1 = Stream.of(1, 2, 3)
+        val s2 = Stream.of(4, 5, 6)
+        Assertions.assertEquals(List.of(1, 2, 3, 4, 5, 6), s1.append { s2 }.toList())
     }
 }

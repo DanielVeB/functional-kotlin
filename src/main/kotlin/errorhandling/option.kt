@@ -4,7 +4,11 @@ import datastructures.*
 import datastructures.Nil.setHead
 import kotlin.math.pow
 
-sealed class Option<out A>
+sealed class Option<out A> {
+    companion object {
+        fun <A> empty(): Option<A> = None
+    }
+}
 
 data class Some<out A>(val get: A) : Option<A>()
 
@@ -22,6 +26,7 @@ fun <A, B> Option<A>.flatMap(f: (A) -> Option<B>): Option<B> =
         is Some -> f(this.get)
         is None -> None
     }
+
 
 fun <A> Option<A>.getOrElse(default: () -> A): A =
     when (this) {
