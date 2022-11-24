@@ -3,9 +3,7 @@ package strictnessandlaziness
 import datastructures.List
 import datastructures.Nil
 import datastructures.reverse
-import errorhandling.None
-import errorhandling.Option
-import errorhandling.Some
+import errorhandling.*
 
 fun maybeTwice2(b: Boolean, i: () -> Int) {
     val j: Int by lazy(i)
@@ -130,4 +128,33 @@ fun <A> Stream<A>.filter(f: (A) -> Boolean): Stream<A> =
 fun <A> Stream<A>.append(other: () -> Stream<A>): Stream<A> =
     foldRight(other) { h, t -> cons({ h }, t) }
 
+fun <A, B> Stream<A>.flatMap(f: (A) -> Stream<B>): Stream<B> =
+    foldRight({ empty() }) { h, t -> f(h).append(t) }
 
+fun ones(): Stream<Int> = cons({ 1 }, { ones() })
+
+// DON'T DO THIS: will throw StackOverflowError - onesL will try to produce infinite list of integers
+fun onesL(): List<Int> = datastructures.Cons(1, onesL())
+
+fun <A> constant(a: A): Stream<A> = cons({ a }, { constant(a) })
+
+fun from(n: Int): Stream<Int> = cons({ n }, { from(n + 1) })
+
+fun fibs(): Stream<Int> {
+    fun seed(n1: Int, n2: Int): Stream<Int> =
+        cons({ n1 }, { seed(n2, n1 + n2) })
+    return seed(0, 1)
+}
+
+fun <A, S> unfold(z: S, f: (S) -> Option<Pair<A, S>>): Stream<A> =
+    f(z).map {
+        cons({ it.first }, { unfold(it.second, f) })
+    }.getOrElse { empty() }
+
+fun onesUnfold(): Stream<Int> = unfold(1) { Some(Pair(1, 1)) }
+
+fun <A> constantUnfold(a: A): Stream<A> = unfold(a) { Some(Pair(a, a)) }
+
+fun fromUnfold(n: Int): Stream<Int> = unfold(n) { Some(Pair(it, it + 1)) }
+
+fun fibsUnfold(): Stream<Int> = unfold(Pair(0, 1)) { (s1, s2) -> Some(Pair(s1, Pair(s2, s1 + s2))) }

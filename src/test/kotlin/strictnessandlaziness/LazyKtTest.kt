@@ -5,6 +5,8 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -128,4 +130,60 @@ internal class LazyKtTest {
         val s2 = Stream.of(4, 5, 6)
         Assertions.assertEquals(List.of(1, 2, 3, 4, 5, 6), s1.append { s2 }.toList())
     }
+
+    @Test
+    fun `Should flatten stream`() {
+        val stream = Stream.of(1, 2, 3)
+        Assertions.assertEquals(
+            List.of(2, 3, 4, 6, 6, 9),
+            stream.flatMap { Stream.of(it * 2, it * 3) }.toList()
+        )
+    }
+
+    @Test
+    fun `Should take first 4 elements from infinite stream`() {
+        val result = ones().take(5).toList()
+        assertEquals(List.of(1, 1, 1, 1, 1), result)
+
+        assertDoesNotThrow { ones() }
+
+        assertThrows<StackOverflowError> { onesL() }
+
+    }
+
+    @Test
+    fun `Should take first 5 n+1 elements starting from 10`() {
+        val result = from(10).take(5).toList()
+        assertEquals(List.of(10, 11, 12, 13, 14), result)
+
+    }
+
+    @Test
+    fun `Should take first 10 elements of fibbonaci`() {
+        val result = fibs().take(10).toList()
+        assertEquals(List.of(0, 1, 1, 2, 3, 5, 8, 13, 21,34), result)
+
+    }
+
+    @Test
+    fun `Unfold - Should take first 4 elements from infinite stream`() {
+        val result = onesUnfold().take(5).toList()
+        assertEquals(List.of(1, 1, 1, 1, 1), result)
+    }
+
+    @Test
+    fun `Unfold - Should take first 5 n+1 elements starting from 10`() {
+        val result = fromUnfold(10).take(5).toList()
+        assertEquals(List.of(10, 11, 12, 13, 14), result)
+    }
+
+    @Test
+    fun `Unfold - Should take first 10 elements of fibbonaci`() {
+        val result = fibsUnfold().take(10).toList()
+        assertEquals(List.of(0, 1, 1, 2, 3, 5, 8, 13, 21,34), result)
+
+    }
+
+
+
 }
