@@ -192,6 +192,22 @@ internal class LazyKtTest {
         )
     }
 
+    @Test
+    fun `Unfold - Should take first 3 elements of stream`() {
+        val stream = Stream.of(1, 2, 3, 4, 5)
+        val result = stream.takeUnfold(3)
+        assertEquals(Stream.of(1, 2, 3).toList(), result.toList())
+    }
+
+    @Test
+    fun `Unfold - Should take while elements are less than 4 of stream`() {
+        val stream = Stream.of(1, 2, 3, 4, 5, 4, 2, 6)
+
+        val result = stream.takeWhileUnfold { it < 4 }
+
+        assertEquals(Stream.of(1, 2, 3).toList(), result.toList())
+    }
+
 
 
 }

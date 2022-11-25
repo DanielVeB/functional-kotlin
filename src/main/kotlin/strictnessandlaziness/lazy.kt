@@ -165,3 +165,24 @@ fun <A, B> Stream<A>.mapUnfold(f: (A) -> B): Stream<B> = unfold(this) { s: Strea
         else -> None
     }
 }
+
+fun <A> Stream<A>.takeUnfold(n: Int): Stream<A> = unfold(Pair(this, n)) { (s, num) ->
+    when (s) {
+        is Cons -> {
+            if (num <= 0) None
+            else Some(Pair(s.head(), Pair(s.tail(), num - 1)))
+        }
+
+        else -> None
+    }
+}
+
+fun <A> Stream<A>.takeWhileUnfold(p: (A) -> Boolean): Stream<A> = unfold(this) { s ->
+    when (s) {
+        is Cons -> {
+            if (!p(s.head())) None
+            else Some(Pair(s.head(), s.tail()))
+        }
+        else -> None
+    }
+}
