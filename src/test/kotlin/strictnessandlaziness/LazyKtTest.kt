@@ -184,6 +184,14 @@ internal class LazyKtTest {
 
     }
 
+    @Test
+    fun `Unfold - Should transform double to string using map function`() {
+        Assertions.assertEquals(
+            Stream.of("1.0", "2.0", "3.0").toList(),
+            Stream.of(1.0, 2.0, 3.0).mapUnfold { a -> a.toString() }.toList()
+        )
+    }
+
 
 
 }

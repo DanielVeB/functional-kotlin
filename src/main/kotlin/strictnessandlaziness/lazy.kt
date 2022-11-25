@@ -158,3 +158,10 @@ fun <A> constantUnfold(a: A): Stream<A> = unfold(a) { Some(Pair(a, a)) }
 fun fromUnfold(n: Int): Stream<Int> = unfold(n) { Some(Pair(it, it + 1)) }
 
 fun fibsUnfold(): Stream<Int> = unfold(Pair(0, 1)) { (s1, s2) -> Some(Pair(s1, Pair(s2, s1 + s2))) }
+
+fun <A, B> Stream<A>.mapUnfold(f: (A) -> B): Stream<B> = unfold(this) { s: Stream<A> ->
+    when (s) {
+        is Cons -> Some(f(s.head()) to s.tail())
+        else -> None
+    }
+}
