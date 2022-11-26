@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import utils.round
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -161,7 +162,7 @@ internal class LazyKtTest {
     @Test
     fun `Should take first 10 elements of fibbonaci`() {
         val result = fibs().take(10).toList()
-        assertEquals(List.of(0, 1, 1, 2, 3, 5, 8, 13, 21,34), result)
+        assertEquals(List.of(0, 1, 1, 2, 3, 5, 8, 13, 21, 34), result)
 
     }
 
@@ -180,7 +181,7 @@ internal class LazyKtTest {
     @Test
     fun `Unfold - Should take first 10 elements of fibbonaci`() {
         val result = fibsUnfold().take(10).toList()
-        assertEquals(List.of(0, 1, 1, 2, 3, 5, 8, 13, 21,34), result)
+        assertEquals(List.of(0, 1, 1, 2, 3, 5, 8, 13, 21, 34), result)
 
     }
 
@@ -208,6 +209,17 @@ internal class LazyKtTest {
         assertEquals(Stream.of(1, 2, 3).toList(), result.toList())
     }
 
+    @Test
+    fun `Unfold - Should divide elements of first stream with elements of second`() {
+        val s1 = Stream.of(1, 3, 4)
+        val s2 = Stream.of(2, 4, 6)
+
+        Assertions.assertEquals(
+            List.of(0.5, 0.75, 0.67),
+            s1.zipWith(s2) { a, b -> a.toDouble().div(b).round(2) }.toList()
+        )
+
+    }
 
 
 }
