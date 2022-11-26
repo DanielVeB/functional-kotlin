@@ -1,6 +1,8 @@
 package strictnessandlaziness
 
 import datastructures.List
+import errorhandling.None
+import errorhandling.Some
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions
@@ -218,8 +220,66 @@ internal class LazyKtTest {
             List.of(0.5, 0.75, 0.67),
             s1.zipWith(s2) { a, b -> a.toDouble().div(b).round(2) }.toList()
         )
-
     }
 
+    @Test
+    fun `Unfold - Should zip pairs of two streams`() {
+        val s1 = Stream.of('a', 'b', 'c')
+        val s2 = Stream.of(1, 2, 3)
 
+        Assertions.assertEquals(
+            List.of(
+                Pair(Some('a'), Some(1)),
+                Pair(Some('b'), Some(2)),
+                Pair(Some('c'), Some(3))
+            ),
+            s1.zipAll(s2).toList()
+        )
+
+        val s3 = Stream.of('a', 'b', 'c')
+        val s4 = Stream.of(1, 2)
+
+        Assertions.assertEquals(
+            List.of(
+                Pair(Some('a'), Some(1)),
+                Pair(Some('b'), Some(2)),
+                Pair(Some('c'), None)
+            ),
+            s3.zipAll(s4).toList()
+        )
+
+        val s5 = Stream.of('a', 'b')
+        val s6 = Stream.of(1, 2, 3)
+
+        Assertions.assertEquals(
+            List.of(
+                Pair(Some('a'), Some(1)),
+                Pair(Some('b'), Some(2)),
+                Pair(None, Some(3))
+            ),
+            s5.zipAll(s6).toList()
+        )
+
+        val s7 = Stream.of('a', 'b', 'c')
+        Assertions.assertEquals(
+            List.of(
+                Pair(Some('a'), None),
+                Pair(Some('b'), None),
+                Pair(Some('c'), None)
+            ),
+            s7.zipAll(empty<Int>()).toList()
+        )
+
+        val s8 = Stream.of(1, 2, 3)
+
+        Assertions.assertEquals(
+            List.of(
+                Pair(None, Some(1)),
+                Pair(None, Some(2)),
+                Pair(None, Some(3))
+            ),
+            empty<String>().zipAll(s8).toList()
+        )
+
+    }
 }

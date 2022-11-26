@@ -183,6 +183,7 @@ fun <A> Stream<A>.takeWhileUnfold(p: (A) -> Boolean): Stream<A> = unfold(this) {
             if (!p(s.head())) None
             else Some(Pair(s.head(), s.tail()))
         }
+
         else -> None
     }
 }
@@ -199,12 +200,41 @@ fun <A, B, C> Stream<A>.zipWith(
                     else -> None
                 }
             }
+
             else -> None
         }
     }
 
 
-//fun <A, B> Stream<A>.zipAll(
-//    that: Stream<B>
-//): Stream<Pair<Option<A>, Option<B>>> =
-//    SOLUTION_HERE()
+fun <A, B> Stream<A>.zipAll(
+    that: Stream<B>
+): Stream<Pair<Option<A>, Option<B>>> =
+    unfold(Pair(this, that)) { (s1, s2) ->
+        when (s1) {
+            is Cons -> {
+                when (s2) {
+                    is Cons -> Some(
+                        Pair(
+                            Pair(Some(s1.head()), Some(s2.head())),
+                            Pair(s1.tail(), s2.tail())
+                        )
+                    )
+                    else -> Some(
+                        Pair(
+                            Pair(Some(s1.head()), None),
+                            Pair(s1.tail(), empty())
+                        )
+                    )
+                }
+            }
+            else -> when (s2) {
+                is Cons -> Some(
+                    Pair(
+                        Pair(None, Some(s2.head())),
+                        Pair(empty(), s2.tail())
+                    )
+                )
+                else -> None
+            }
+        }
+    }
