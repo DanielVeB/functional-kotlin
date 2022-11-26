@@ -280,6 +280,24 @@ internal class LazyKtTest {
             ),
             empty<String>().zipAll(s8).toList()
         )
+    }
+
+    @Test
+    fun `Unfold - Should return true when streams starts from given stream`() {
+
+        val stream = Stream.of('a', 'b', 'c', 'd', 'e', 'f', 'g')
+
+        assertTrue { stream.startsWith(Stream.of('a')) }
+        assertTrue { stream.startsWith(Stream.of('a', 'b')) }
+        assertTrue { stream.startsWith(Stream.of('a', 'b', 'c')) }
+        assertTrue { stream.startsWith(Stream.of('a', 'b', 'c', 'd')) }
+
+        assertFalse { stream.startsWith(Stream.of('n')) }
+        assertFalse { stream.startsWith(Stream.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')) }
+        assertFalse { stream.startsWith(Stream.of('a', 'b', 'c', 'd', 'x')) }
+        assertFalse { stream.startsWith(Stream.of(1)) }
 
     }
+
+
 }

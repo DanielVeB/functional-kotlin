@@ -219,6 +219,7 @@ fun <A, B> Stream<A>.zipAll(
                             Pair(s1.tail(), s2.tail())
                         )
                     )
+
                     else -> Some(
                         Pair(
                             Pair(Some(s1.head()), None),
@@ -227,6 +228,7 @@ fun <A, B> Stream<A>.zipAll(
                     )
                 }
             }
+
             else -> when (s2) {
                 is Cons -> Some(
                     Pair(
@@ -234,7 +236,16 @@ fun <A, B> Stream<A>.zipAll(
                         Pair(empty(), s2.tail())
                     )
                 )
+
                 else -> None
             }
+        }
+    }
+
+fun <A> Stream<A>.startsWith(that: Stream<A>): Boolean =
+    that.zipAll(this).forAll {
+        when (it.first) {
+            is Some -> it.first == it.second
+            else -> true
         }
     }
