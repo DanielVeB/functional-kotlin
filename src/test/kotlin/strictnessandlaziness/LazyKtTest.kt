@@ -316,4 +316,15 @@ internal class LazyKtTest {
         assertFalse(stream.hasSubsequence(Stream.of(3, 2, 1)))
         assertFalse(stream.hasSubsequence(Stream.of('a')))
     }
+
+
+    @Test
+    fun `Unfold - Should sum tails of stream`() {
+        val stream = Stream.of(1, 2, 3)
+
+        val result = stream.scanRight(0) { a, b -> a + b }.toList()
+
+        assertEquals(List.of(6, 5, 3, 0), result)
+    }
+
 }

@@ -251,12 +251,28 @@ fun <A> Stream<A>.startsWith(that: Stream<A>): Boolean =
     }
 
 fun <A> Stream<A>.tails(): Stream<Stream<A>> =
-    unfold( this) {  s: Stream<A> ->
+    unfold(this) { s: Stream<A> ->
         when (s) {
-            is Cons -> Some(Pair( s,  s.tail()))
+            is Cons -> Some(Pair(s, s.tail()))
             else -> None
         }
     }
 
 fun <A> Stream<A>.hasSubsequence(s: Stream<A>): Boolean =
     this.tails().exists { it.startsWith(s) }
+
+//WRONG
+//fun <A, B> Stream<A>.scanRight(z: B, f: (A, B) -> B): Stream<B> =
+//    unfold(this) { s: Stream<A> ->
+//        when (s) {
+//            is Cons -> Some(Pair(s.foldRight({ z }) { a, b -> f(a, b()) }, s.tail()))
+//            else -> None
+//        }
+//    }
+
+fun <A, B> Stream<A>.scanRight(z: B, f: (A, B) -> B): Stream<B> =
+    foldRight({ z to Stream.of(z) }, { a: A, b: () -> Pair<B, Stream<B>> ->
+        val p1: Pair<B, Stream<B>> by lazy(b)
+        val p2 = f(a, p1.first)
+        Pair(p2, cons({ p2 }, { p1.second }))
+    }).second
