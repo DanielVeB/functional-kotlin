@@ -14,6 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+
 internal class LazyKtTest {
 
     @Test
@@ -299,5 +300,20 @@ internal class LazyKtTest {
 
     }
 
+    @Test
+    fun `Unfold - Should return true when stream has subsequence`() {
+        val stream = Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 
+        assertTrue(stream.hasSubsequence(Stream.of(1, 2, 3)))
+        assertTrue(stream.hasSubsequence(Stream.of(8, 9, 10)))
+        assertTrue(stream.hasSubsequence(Stream.of(4, 5, 6)))
+        assertTrue(stream.hasSubsequence(empty()))
+        assertTrue(stream.hasSubsequence(Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)))
+
+        assertFalse(stream.hasSubsequence(Stream.of(1, 2, 3, 5)))
+        assertFalse(stream.hasSubsequence(Stream.of(0)))
+        assertFalse(stream.hasSubsequence(Stream.of(11)))
+        assertFalse(stream.hasSubsequence(Stream.of(3, 2, 1)))
+        assertFalse(stream.hasSubsequence(Stream.of('a')))
+    }
 }

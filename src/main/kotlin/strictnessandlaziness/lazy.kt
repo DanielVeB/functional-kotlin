@@ -249,3 +249,14 @@ fun <A> Stream<A>.startsWith(that: Stream<A>): Boolean =
             else -> true
         }
     }
+
+fun <A> Stream<A>.tails(): Stream<Stream<A>> =
+    unfold( this) {  s: Stream<A> ->
+        when (s) {
+            is Cons -> Some(Pair( s,  s.tail()))
+            else -> None
+        }
+    }
+
+fun <A> Stream<A>.hasSubsequence(s: Stream<A>): Boolean =
+    this.tails().exists { it.startsWith(s) }
