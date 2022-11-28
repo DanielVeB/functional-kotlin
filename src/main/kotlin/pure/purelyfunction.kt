@@ -3,6 +3,7 @@ package pure
 import datastructures.Cons
 import datastructures.List
 import datastructures.Nil
+import datastructures.foldRight
 import errorhandling.None
 import errorhandling.Some
 import errorhandling.getOrElse
@@ -71,3 +72,50 @@ fun ints2(count: Int, rng: RNG): Pair<List<Int>, RNG> =
         val (xs, r2) = ints(count - 1, r1)
         Cons(i, xs) to r2
     } else Nil to rng
+
+//--------------------------------------------------------
+
+typealias Rand<A> = (RNG) -> Pair<A, RNG>
+
+val intR: Rand<Int> = { rng -> rng.nextInt() }
+fun <A> unit(a: A): Rand<A> = { rng -> a to rng }
+
+fun <A, B> map(s: Rand<A>, f: (A) -> B): Rand<B> =
+    { rng ->
+        val (a, rng2) = s(rng)
+        f(a) to rng2
+    }
+
+fun nonNegativeEven(): Rand<Int> =
+    map(::nonNegativeInt) { it - (it % 2) }
+
+fun doubleR(): Rand<Double> =
+    map(::nonNegativeInt) { it / (Int.MAX_VALUE.toDouble() + 1) }
+
+fun <A, B, C> map2(
+    ra: Rand<A>,
+    rb: Rand<B>,
+    f: (A, B) -> C
+): Rand<C> = { rng ->
+    val (a, rnga) = ra(rng)
+    val (b, rngb) = rb(rnga)
+    f(a, b) to rngb
+}
+
+fun <A, B> both(ra: Rand<A>, rb: Rand<B>): Rand<Pair<A, B>> =
+    map2(ra, rb) { a, b -> a to b }
+
+
+val doubleR: Rand<Double> =
+    map(::nonNegativeInt) { i ->
+        i / (Int.MAX_VALUE.toDouble() + 1)
+    }
+
+val intDoubleR: Rand<Pair<Int, Double>> = both(intR, doubleR)
+
+val doubleIntR: Rand<Pair<Double, Int>> = both(doubleR, intR)
+
+fun <A> sequence(fs: List<Rand<A>>): Rand<List<A>> =
+    foldRight(fs, unit(List.empty())) { f: Rand<A>, acc: Rand<List<A>> ->
+        map2(f, acc) { a, b -> Cons(a, b) }
+    }

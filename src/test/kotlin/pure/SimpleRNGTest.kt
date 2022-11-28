@@ -31,6 +31,12 @@ internal class SimpleRNGTest {
     }
 
     @Test
+    fun `Should return random double - with map function`() {
+        val randomDouble = doubleR()
+        assertTrue(randomDouble(SimpleRNG(5432321)).first > 0)
+    }
+
+    @Test
     fun `Should generate list of random ints`() {
         val rng = SimpleRNG(42)
 
