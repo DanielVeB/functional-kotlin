@@ -75,24 +75,25 @@ fun ints2(count: Int, rng: RNG): Pair<List<Int>, RNG> =
 
 //--------------------------------------------------------
 
-typealias Rand<A> = (RNG) -> Pair<A, RNG>
+//typealias Rand<A> = (RNG) -> Pair<A, RNG>
+typealias Rand<A> = PureState<RNG, A>
 
 val intR: Rand<Int> = { rng -> rng.nextInt() }
 fun <A> unit(a: A): Rand<A> = { rng -> a to rng }
 
-fun <A, B> map(s: Rand<A>, f: (A) -> B): Rand<B> =
+fun <A, B> mapOld(s: Rand<A>, f: (A) -> B): Rand<B> =
     { rng ->
         val (a, rng2) = s(rng)
         f(a) to rng2
     }
 
 fun nonNegativeEven(): Rand<Int> =
-    map(::nonNegativeInt) { it - (it % 2) }
+    mapOld(::nonNegativeInt) { it - (it % 2) }
 
 fun doubleR(): Rand<Double> =
-    map(::nonNegativeInt) { it / (Int.MAX_VALUE.toDouble() + 1) }
+    mapOld(::nonNegativeInt) { it / (Int.MAX_VALUE.toDouble() + 1) }
 
-fun <A, B, C> map2(
+fun <A, B, C> map2Old(
     ra: Rand<A>,
     rb: Rand<B>,
     f: (A, B) -> C
@@ -103,11 +104,11 @@ fun <A, B, C> map2(
 }
 
 fun <A, B> both(ra: Rand<A>, rb: Rand<B>): Rand<Pair<A, B>> =
-    map2(ra, rb) { a, b -> a to b }
+    map2Old(ra, rb) { a, b -> a to b }
 
 
 val doubleR: Rand<Double> =
-    map(::nonNegativeInt) { i ->
+    mapOld(::nonNegativeInt) { i ->
         i / (Int.MAX_VALUE.toDouble() + 1)
     }
 
@@ -117,5 +118,32 @@ val doubleIntR: Rand<Pair<Double, Int>> = both(doubleR, intR)
 
 fun <A> sequence(fs: List<Rand<A>>): Rand<List<A>> =
     foldRight(fs, unit(List.empty())) { f: Rand<A>, acc: Rand<List<A>> ->
-        map2(f, acc) { a, b -> Cons(a, b) }
+        map2Old(f, acc) { a, b -> Cons(a, b) }
+    }
+
+fun <A, B> flatMap(f: Rand<A>, g: (A) -> Rand<B>): Rand<B> =
+    { rng ->
+        val (a, rng2) = f(rng)
+        g(a).invoke(rng2)
+    }
+
+fun nonNegativeLessThan(n: Int): Rand<Int> =
+    flatMap(::nonNegativeInt) { i: Int ->
+        val mod = i % n
+        if (i + (n - 1) - mod >= 0) unit(mod)
+        else nonNegativeLessThan(n)
+    }
+
+fun <A, B> map(s: Rand<A>, f: (A) -> B): Rand<B> =
+    flatMap(s) { unit(f.invoke(it)) }
+
+fun <A, B, C> map2(
+    ra: Rand<A>,
+    rb: Rand<B>,
+    f: (A, B) -> C
+): Rand<C> =
+    flatMap(ra) { a ->
+        map(rb) { b ->
+            f(a, b)
+        }
     }

@@ -45,4 +45,14 @@ internal class SimpleRNGTest {
         assertEquals(r1, r2)
     }
 
+    @Test
+    fun `Should generate random integer less than 10`() {
+        val randomInt = nonNegativeLessThan(10)
+        val result = randomInt(SimpleRNG(1))
+        with(result) {
+            assertTrue(first in 0..9)
+            assertTrue(randomInt(second).first in 0..9)
+        }
+    }
+
 }
