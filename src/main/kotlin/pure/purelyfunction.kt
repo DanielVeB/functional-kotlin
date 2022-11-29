@@ -76,7 +76,7 @@ fun ints2(count: Int, rng: RNG): Pair<List<Int>, RNG> =
 //--------------------------------------------------------
 
 //typealias Rand<A> = (RNG) -> Pair<A, RNG>
-typealias Rand<A> = PureState<RNG, A>
+typealias Rand<A> = State<RNG, A>
 
 val intR: Rand<Int> = { rng -> rng.nextInt() }
 fun <A> unit(a: A): Rand<A> = { rng -> a to rng }
@@ -137,11 +137,7 @@ fun nonNegativeLessThan(n: Int): Rand<Int> =
 fun <A, B> map(s: Rand<A>, f: (A) -> B): Rand<B> =
     flatMap(s) { unit(f.invoke(it)) }
 
-fun <A, B, C> map2(
-    ra: Rand<A>,
-    rb: Rand<B>,
-    f: (A, B) -> C
-): Rand<C> =
+fun <A, B, C> map2(ra: Rand<A>, rb: Rand<B>, f: (A, B) -> C): Rand<C> =
     flatMap(ra) { a ->
         map(rb) { b ->
             f(a, b)
